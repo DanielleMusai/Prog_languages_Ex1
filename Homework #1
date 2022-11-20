@@ -1,9 +1,8 @@
 #lang pl
 
 ;=========================Q1=============================
-#|open-list- we will take the first list in
-the list of numbers and connect by using "append"
-the rest of the list to the first one |#
+#|open-list- we will connect all of the lists by using "append" .
+we will going over each list and add to the rest of the list|#
 
 (: open-list : (Listof (Listof Number)) -> (Listof Number))
 (define (open-list lst)
@@ -139,7 +138,7 @@ of the table with the symbol we wanted to delete else we will return the table w
    [(Add sy1 st1 tb1)
             (if(equal? sy sy1) tb1 
               (Add sy1 st1 (remove-item tb1 sy)))]
-     [(EmptyTbl) (EmptyTbl)]))
+   [(EmptyTbl) (EmptyTbl)]))
 
 
 
