@@ -1,0 +1,161 @@
+#lang pl
+
+;=========================Q1=============================
+#|open-list- we will take the first list in
+the list of numbers and connect by using "append"
+the rest of the list to the first one |#
+
+(: open-list : (Listof (Listof Number)) -> (Listof Number))
+(define (open-list lst)
+  (cond [(null? lst) null]
+        [else (append (first lst)(open-list(rest lst)))]))
+
+;=====tests======
+(test (open-list '((1 2 3) (2 3 3 4) (9 2 -1) (233 11 90))) => '(1 2 3 2 3 3 4 9 2 -1 233 11 90))
+(test (open-list '((1 1) (2 2))) => '(1 1 2 2))
+(test (open-list '(() ())) =>'())
+(test (open-list '((1))) => '(1))
+
+
+;;========================Q2==============================
+#|min & max - implementation of minimun and maximun separately.
+taking the previos func(open-list) and doing a pair(by using cons)
+to the min and max from the whole list |# 
+
+;==minumum==
+(: minimum : (Listof Number) -> Number)
+(define (minimum lstmin)
+  (cond [(null? lstmin) +inf.0]
+        [else (min(first lstmin) (minimum(rest lstmin)))]))
+
+
+;=====tests======
+(test (minimum '(1 2 3 4)) => 1.0)
+(test (minimum '(1)) => 1.0)
+(test (minimum '( 9 6 3 44 2 5 6 8 2)) => 2.0)
+(test (minimum '(2 0 0 0)) => 0.0)
+(test (minimum '(-1 -2 -4 8)) => -4.0)
+
+;==maximum==
+(: maximum : (Listof Number) -> Number)
+(define (maximum lstmax)
+   (cond [(null? lstmax) -inf.0]
+        [else (max(first lstmax) (maximum(rest lstmax)))]
+        ))
+
+;=====tests======
+(test (maximum '(999 6 5 1 2 7)) => 999.0)
+(test (maximum '( 3 27 8 9 1 0)) => 27.0)
+(test (maximum '(1)) => 1.0)
+(test (maximum '(2 0 0 0)) => 2.0)
+(test (maximum '(-1 9 8 4)) => 9.0)
+
+;==min&max==
+(: min&max : (Listof (Listof Number)) -> (Listof Number))
+(define (min&max lst1)
+  (cond [(null? lst1) null]
+     [else (cons (minimum (open-list lst1)) (cons (maximum (open-list lst1)) null))]))
+
+
+;=====tests======
+(test (min&max '((1 2 3) (2 3.0 3 4) (9 2 -1) (233 11 90))) => '(-1.0 233.0))
+(test (min&max '(())) => '(+inf.0 -inf.0))
+(test (min&max '((1 2 -1) (0 8 -3))) => '(-3.0 8.0))
+(test (min&max '((1 -1) (0 0))) => '(-1.0 1.0))      
+
+
+;;=========================Q3=============================
+#| min&max_apply - similar to the previos part we found the min&max
+with the built function min and max|#
+
+(: min&max_apply : (Listof (Listof Number)) -> (Listof Number))
+(define (min&max_apply lst1)
+  (cond [(null? lst1) null]
+    [else (list (apply min(open-list lst1)) (apply max(open-list lst1)))]))
+
+
+;=====tests======
+(test (min&max_apply '((1 2 3) (2 3 3 4) (9 2 -1) (233 11 90))) => '(-1 233))
+(test (min&max_apply '((1 1) (1 0 -1) (8 7 2))) => '(-1 8))
+(test (min&max_apply '((0 0 0 1))) => '(0 1))
+
+
+;====================Second Section====================================
+#| define a new type called Table
+EmptyTbl and Add are defined as the varient of the data type (constructor).
+The add operation take as input a symbol (key), a string 
+(value) and an existing table and return a table|#
+
+;===============EmptyTbl & Add===============
+(define-type Table
+[EmptyTbl]
+[Add Symbol String Table])
+
+
+;=====tests======
+(test (EmptyTbl) => (EmptyTbl))
+(test (Add 'b "B" (Add 'a "A" (EmptyTbl))) => 
+(Add 'b "B" (Add 'a "A" (EmptyTbl))))
+(test (Add 'a "aa" (Add 'b "B" (Add 'a "A" (EmptyTbl)))) => 
+(Add 'a "aa" (Add 'b "B" (Add 'a "A" (EmptyTbl)))))
+
+
+;================search-table=================
+#| search-table - We will go over the table in recursion and we will
+check if the symbol is equal to the symbol we are looking for and
+return the string else we will call "search-table" |#
+
+(: search-table : Symbol Table -> (U String #f))
+(define (search-table sy tb)
+  (cases tb
+   [(Add sy1 st1 tb1)
+            (if(equal? sy sy1) st1
+               (search-table  sy tb1))]
+   [(EmptyTbl) #f]))
+
+
+;=====tests======
+(test (search-table 'c (Add 'a "AAA" (Add 'b "B" (Add 'a "A" 
+(EmptyTbl)))))
+=> #f)
+(test (search-table 'a (Add 'a "AAA" (Add 'b "B" (Add 'a "A" 
+(EmptyTbl)))))
+=> "AAA")
+(test (search-table 'b (Add 'b "B" (Add 'b "B" (Add 'a "A" 
+(EmptyTbl)))))
+=> "B")
+(test (search-table 'c (Add 'a "A" 
+(EmptyTbl)))
+=> #f)
+
+;===============remove-item===============
+#| remove-item very similar to the search-table .
+if the symbol is equal to the symbol we are looking for we will returm the table with kind of skipping
+of the table with the symbol we wanted to delete else we will return the table without changing |#
+
+(: remove-item : Table Symbol -> Table)
+(define (remove-item tb sy)
+  (cases tb
+   [(Add sy1 st1 tb1)
+            (if(equal? sy sy1) tb1 
+              (Add sy1 st1 (remove-item tb1 sy)))]
+     [(EmptyTbl) (EmptyTbl)]))
+
+
+
+;=====tests======
+(test (remove-item (Add 'a "AAA" (Add 'b "B" (Add 'a "A" 
+(EmptyTbl)))) 'a)
+=> (Add 'b "B" (Add 'a "A" (EmptyTbl))))
+
+(test (remove-item (Add 'a "AAA" (Add 'b "B" (Add 'a "A" 
+(EmptyTbl)))) 'b)
+=> (Add 'a "AAA" (Add 'a "A" (EmptyTbl))))
+
+(test (remove-item (Add 'a "A" (EmptyTbl)) 'a)
+      => (EmptyTbl))
+
+(test (remove-item (Add 'a "AAA" (Add 'b "B" (Add 'a "A" 
+(EmptyTbl)))) 'c)
+=>  (Add 'a "AAA" (Add 'b "B" (Add 'a "A" 
+(EmptyTbl)))))
