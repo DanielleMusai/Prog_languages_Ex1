@@ -1,9 +1,17 @@
 #lang pl
 
 ;=========================Q1=============================
-#|open-list- we will connect all of the lists by using "append" .
-we will going over each list and add to the rest of the list|#
+#|
+open-list- we will connect all of the lists by using "append" .
+we will going over each list and add to the rest of the list
+|#
 
+#|
+The main difficulty in this question was to understand the syntax
+and especially the errors of the brackets.
+This section of the assignment took me the most time of all the questions because
+I had to get used to the new syntax and understand the errors
+|#
 (: open-list : (Listof (Listof Number)) -> (Listof Number))
 (define (open-list lst)
   (cond [(null? lst) null]
@@ -17,9 +25,15 @@ we will going over each list and add to the rest of the list|#
 
 
 ;;========================Q2==============================
-#|min & max - implementation of minimun and maximun separately.
+#|
+min & max - implementation of minimun and maximun separately.
 taking the previos func(open-list) and doing a pair(by using cons)
-to the min and max from the whole list |# 
+to the min and max from the whole list
+|#
+
+#|
+The main difficulty was in understanding the question and the recursion
+|#
 
 ;==minumum==
 (: minimum : (Listof Number) -> Number)
@@ -64,12 +78,20 @@ to the min and max from the whole list |#
 
 
 ;;=========================Q3=============================
-#| min&max_apply - similar to the previos part we found the min&max
-with the built function min and max|#
+#|
+min&max_apply - similar to the previos part we found the min&max
+with the built function min and max
+|#
+
+#|
+The main difficulty was in understanding the
+difference between the previous part and the following section part
+|#
+
 
 (: min&max_apply : (Listof (Listof Number)) -> (Listof Number))
 (define (min&max_apply lst1)
-  (cond [(null? lst1) null]
+  (cond [(null? lst1)'(-inf.0 +inf.0)]
     [else (list (apply min(open-list lst1)) (apply max(open-list lst1)))]))
 
 
@@ -77,13 +99,22 @@ with the built function min and max|#
 (test (min&max_apply '((1 2 3) (2 3 3 4) (9 2 -1) (233 11 90))) => '(-1 233))
 (test (min&max_apply '((1 1) (1 0 -1) (8 7 2))) => '(-1 8))
 (test (min&max_apply '((0 0 0 1))) => '(0 1))
-
+(test (min&max_apply '((0)))=> '(0 0))
 
 ;====================Second Section====================================
-#| define a new type called Table
+#|
+define a new type called Table
 EmptyTbl and Add are defined as the varient of the data type (constructor).
 The add operation take as input a symbol (key), a string 
-(value) and an existing table and return a table|#
+(value) and an existing table and return a table
+|#
+
+#|
+The difficulty was in understanding how the constructor works in this language,
+the recursion and the data structure.
+The "remove" part took me longer than the others. The difficulty in skipping over the
+object I want to delete and returning the rest of the list
+|#
 
 ;===============EmptyTbl & Add===============
 (define-type Table
@@ -97,6 +128,8 @@ The add operation take as input a symbol (key), a string
 (Add 'b "B" (Add 'a "A" (EmptyTbl))))
 (test (Add 'a "aa" (Add 'b "B" (Add 'a "A" (EmptyTbl)))) => 
 (Add 'a "aa" (Add 'b "B" (Add 'a "A" (EmptyTbl)))))
+(test (Add 'a "A" (EmptyTbl)) => 
+(Add 'a "A" (EmptyTbl)))
 
 
 ;================search-table=================
