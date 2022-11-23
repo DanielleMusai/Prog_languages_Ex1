@@ -66,16 +66,21 @@ The main difficulty was in understanding the question and the recursion
 ;==min&max==
 (: min&max : (Listof (Listof Number)) -> (Listof Number))
 (define (min&max lst1)
-  (cond [(null? lst1) null]
+  (cond [(null? (open-list lst1))'(-inf.0 +inf.0)]
      [else (cons (minimum (open-list lst1)) (cons (maximum (open-list lst1)) null))]))
 
 
 ;=====tests======
 (test (min&max '((1 2 3) (2 3.0 3 4) (9 2 -1) (233 11 90))) => '(-1.0 233.0))
-(test (min&max '(())) => '(+inf.0 -inf.0))
+(test (min&max '(())) => '(-inf.0 +inf.0))
 (test (min&max '((1 2 -1) (0 8 -3))) => '(-3.0 8.0))
-(test (min&max '((1 -1) (0 0))) => '(-1.0 1.0))      
+(test (min&max '((1 -1) (0 0))) => '(-1.0 1.0))
 
+
+#|
+It is important to say that I consulted we others the min&max question
+in order to understand the difference between the two sections
+|#
 
 ;;=========================Q3=============================
 #|
@@ -91,7 +96,7 @@ difference between the previous part and the following section part
 
 (: min&max_apply : (Listof (Listof Number)) -> (Listof Number))
 (define (min&max_apply lst1)
-  (cond [(null? lst1)'(-inf.0 +inf.0)]
+  (cond [(null? (open-list lst1))'(-inf.0 +inf.0)]
     [else (list (apply min(open-list lst1)) (apply max(open-list lst1)))]))
 
 
@@ -100,7 +105,7 @@ difference between the previous part and the following section part
 (test (min&max_apply '((1 1) (1 0 -1) (8 7 2))) => '(-1 8))
 (test (min&max_apply '((0 0 0 1))) => '(0 1))
 (test (min&max_apply '((0)))=> '(0 0))
-
+(test (min&max_apply '(()))=> '(-inf.0 +inf.0))
 ;====================Second Section====================================
 #|
 define a new type called Table
